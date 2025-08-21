@@ -1,0 +1,35 @@
+pip install mysql-connector-python
+CREATE TABLE televisions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    catalog_number VARCHAR(50) UNIQUE NOT NULL,
+    brand VARCHAR(20) NOT NULL,
+    model VARCHAR(50) NOT NULL,
+    screen_size INT NOT NULL,
+    resolution ENUM('4K', '8K', 'Full HD') NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    stock_quantity INT NOT NULL,
+    release_year INT NOT NULL,
+    smart_tv BOOLEAN NOT NULL,
+    os VARCHAR(30),
+    panel_type ENUM('OLED', 'QLED', 'LED') NOT NULL,
+
+    -- Constraints
+    CHECK (brand IN ('Samsung', 'LG', 'Sony')),
+    CHECK (screen_size > 0),
+    CHECK (price > 0),
+    CHECK (stock_quantity >= 0),
+    CHECK (release_year >= 1990 AND release_year <= YEAR(CURDATE()) + 1),
+    CHECK (smart_tv = 1 OR (smart_tv = 0 AND os IS NULL)),
+    CHECK (panel_type IN ('OLED', 'QLED', 'LED'))
+);
+
+QUERIES);
+
+INSERT INTO televisions (catalog_number, brand, model, screen_size, resolution, price, stock_quantity, release_year, smart_tv, os, panel_type)
+VALUES ('SAM-QN65Q900RBF', 'Samsung', 'QN65Q900RBF', 65, '8K', 9999.99, 10, 2019, TRUE, 'Tizen', 'QLED');
+
+INSERT INTO televisions (catalog_number, brand, model, screen_size, resolution, price, stock_quantity, release_year, smart_tv, os, panel_type)
+VALUES ('LG-OLED55C1PUB', 'LG', 'OLED55C1PUB', 55, '4K', 1499.50, 25, 2021, TRUE, 'webOS', 'OLED');
+
+INSERT INTO televisions (catalog_number, brand, model, screen_size, resolution, price, stock_quantity, release_year, smart_tv, os, panel_type)
+VALUES ('SONY-KD43X80J', 'Sony', 'KD43X80J', 43, '4K', 699.00, 50, 2021, TRUE, 'Google TV', 'LED');
