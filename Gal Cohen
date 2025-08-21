@@ -1,0 +1,209 @@
+#1bygenere
+SELECT
+  genre,
+  COUNT(movie_name) AS total_movies
+FROM movies
+GROUP BY
+  genre;
+
+#2sumbyyear
+SELECT
+  year,
+  SUM(revenue) AS total_revenue
+FROM movies
+GROUP BY
+  year
+ORDER BY
+  year;
+
+#3avgbygenere
+SELECT
+  genre,
+  AVG(revenue) AS average_revenue
+FROM movies
+GROUP BY
+  genre;
+
+#4avgbygenerelang
+SELECT
+  genre,
+  language,
+  AVG(revenue) AS average_revenue
+FROM movies
+GROUP BY
+  genre,
+  language;
+
+#5moviebylang
+SELECT
+  language,
+  COUNT(movie_name) AS total_movies
+FROM movies
+GROUP BY
+  language
+ORDER BY
+  total_movies ASC
+LIMIT 1;
+
+#6moviebycountry
+
+SELECT
+  country,
+  COUNT(movie_name) AS total_movies
+FROM movies
+GROUP BY
+  country
+ORDER BY
+  total_movies DESC
+LIMIT 1;
+
+#7moviesbygenere2
+
+SELECT
+  genre,
+  COUNT(movie_name) AS total_movies
+FROM movies
+GROUP BY
+  genre
+HAVING
+  total_movies > 2;
+
+#8sumbig1000
+SELECT
+  year,
+  SUM(revenue) AS total_revenue
+FROM movies
+GROUP BY
+  year
+HAVING
+  total_revenue > 1000
+ORDER BY
+  year;
+
+#9langby3movies
+
+SELECT
+  language,
+  COUNT(movie_name) AS total_movies
+FROM movies
+GROUP BY
+  language
+HAVING
+  total_movies >= 3;
+
+#####Part C#####display movies#######
+import sqlite3
+ 
+# Connect to the SQLite database
+conn = sqlite3.connect('movies.db')
+cursor = conn.cursor()
+ 
+try:
+    # Execute a query to select all movies
+    cursor.execute('SELECT * FROM movies')
+ 
+    # Fetch all the results
+    movies = cursor.fetchall()
+ 
+    # Print the column headers
+    print("{:<5} {:<35} {:<15} {:<15} {:<20} {:<10} {:<10}".format(
+        "ID", "Movie Name", "Genre", "Country", "Language", "Year", "Revenue"
+    ))
+    print("-" * 115)
+ 
+    # Loop through the results and print each movie
+    for movie in movies:
+        print("{:<5} {:<35} {:<15} {:<15} {:<20} {:<10} {:<10.1f}".format(
+            movie[0], movie[1], movie[2], movie[3], movie[4], movie[5], movie[6]
+        ))
+ 
+except sqlite3.Error as e:
+    print(f"An error occurred: {e}")
+ 
+finally:
+    # Close the connection
+    conn.close()
+
+##########Part C####### BY NAME
+
+import sqlite3
+ 
+# Connect to the SQLite database
+conn = sqlite3.connect('movies.db')
+cursor = conn.cursor()
+ 
+try:
+    # Get user input for the movie name
+    search_term = input("Enter a movie name or part of a movie name: ")
+ 
+    # Use a parameterized query to prevent SQL injection
+    query = 'SELECT * FROM movies WHERE movie_name LIKE ?'
+    cursor.execute(query, ('%' + search_term + '%',))
+ 
+    # Fetch all matching results
+    movies = cursor.fetchall()
+ 
+    if movies:
+        print("\nMatching movies found:")
+        print("-" * 115)
+        print("{:<5} {:<35} {:<15} {:<15} {:<20} {:<10} {:<10}".format(
+            "ID", "Movie Name", "Genre", "Country", "Language", "Year", "Revenue"
+        ))
+        print("-" * 115)
+ 
+        for movie in movies:
+            print("{:<5} {:<35} {:<15} {:<15} {:<20} {:<10} {:<10.1f}".format(
+                movie[0], movie[1], movie[2], movie[3], movie[4], movie[5], movie[6]
+            ))
+    else:
+        print("\nNo movies found matching your search term.")
+ 
+except sqlite3.Error as e:
+    print(f"An error occurred: {e}")
+ 
+finally:
+    # Close the connection
+    conn.close()
+
+############Part C######## Insert new movie########
+
+import sqlite3
+ 
+# Connect to the SQLite database
+conn = sqlite3.connect('movies.db')
+cursor = conn.cursor()
+ 
+try:
+    # Get movie details from the user
+    movie_name = input("Enter movie name: ")
+    genre = input("Enter genre: ")
+    country = input("Enter country: ")
+    language = input("Enter language: ")
+    year = int(input("Enter year: "))
+    revenue = float(input("Enter revenue (in millions): "))
+ 
+    # Use a parameterized INSERT query
+    cursor.execute(
+        """
+        INSERT INTO movies (movie_name, genre, country, language, year, revenue)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        (movie_name, genre, country, language, year, revenue)
+    )
+ 
+    # Commit the changes to the database
+    conn.commit()
+    print(f"\nMovie '{movie_name}' inserted successfully!")
+ 
+except ValueError:
+    print("Invalid input for year or revenue. Please enter a number.")
+except sqlite3.IntegrityError as e:
+    print(f"An integrity error occurred: {e}. (Possible duplicate movie name)")
+except sqlite3.Error as e:
+    print(f"An error occurred: {e}")
+ 
+finally:
+    # Close the connection
+    conn.close()
+
+
