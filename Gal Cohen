@@ -205,5 +205,3 @@ except sqlite3.Error as e:
 finally:
     # Close the connection
     conn.close()
-
-
